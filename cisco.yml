@@ -1,0 +1,35 @@
+---
+ - hosts: "cisco_2900"
+   gather_facts: no
+   connection: local
+#     port: 22
+#     authorize: yes
+#     auth_pass: smartcom
+
+   tasks:
+
+   - name: SYS | Define provider
+     set_fact:
+       provider:
+         host: "{{ inventory_hostname }}"
+         username: gasper
+         password: gasper
+         authorize: yes
+         auth_pass: smartcom
+
+   - name: Config | config mode
+     ios_command:
+       provider: "{{ provider }}"
+       commands:
+         - conf t
+         - vlan 33
+         - name test
+         - do sh vlan
+     register: result
+
+#   - name: save output
+#     copy:
+#      content: "{{ result.stdout  }}"
+#      dest: "/etc/ansible/test.txt"
+
+   - debug: msg="{{ result.stdout }}"
